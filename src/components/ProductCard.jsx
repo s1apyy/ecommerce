@@ -1,15 +1,19 @@
+import { useRef } from 'react'
 import { Link } from 'react-router-dom'
+import { flyToCart } from '../lib/flyToCart'
 import { formatPrice, salePrice } from '../lib/format'
 import { useCartStore } from '../store/useCartStore'
-import { useUiStore } from '../store/useUiStore'
 
 export default function ProductCard({ product }) {
+  const cardRef = useRef(null)
   const addItem = useCartStore((state) => state.addItem)
-  const openCart = useUiStore((state) => state.openCart)
   const discounted = salePrice(product)
 
   return (
-    <article className="group flex flex-col overflow-hidden rounded-3xl border border-line bg-cream">
+    <article
+      ref={cardRef}
+      className="group flex flex-col overflow-hidden rounded-3xl border border-line bg-cream"
+    >
       <Link to={`/products/${product.id}`} className="relative block aspect-[4/5] overflow-hidden bg-paper-2">
         <img
           src={product.thumbnail}
@@ -40,7 +44,7 @@ export default function ProductCard({ product }) {
             type="button"
             onClick={() => {
               addItem(product)
-              openCart()
+              flyToCart(cardRef.current)
             }}
             className="rounded-full bg-ink px-3 py-2 text-sm text-cream hover:bg-accent-dark"
           >

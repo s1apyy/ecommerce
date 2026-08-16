@@ -26,11 +26,11 @@ describe('ProductCard', () => {
     expect(screen.getByRole('button', { name: /в корзину/i })).toBeInTheDocument()
   })
 
-  it('adds the product to the cart and opens the drawer', async () => {
+  it('adds the product to the cart without opening the drawer', async () => {
     const user = userEvent.setup()
     renderCard()
     await user.click(screen.getByRole('button', { name: /в корзину/i }))
     expect(useCartStore.getState().items).toHaveLength(1)
-    expect(useUiStore.getState().cartOpen).toBe(true)
+    expect(useUiStore.getState().cartOpen).toBe(false)
   })
 })

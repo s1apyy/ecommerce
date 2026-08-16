@@ -1,15 +1,15 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useProduct } from '../hooks/useProducts'
+import { flyToCart } from '../lib/flyToCart'
 import { formatPrice, salePrice } from '../lib/format'
 import { useCartStore } from '../store/useCartStore'
-import { useUiStore } from '../store/useUiStore'
 
 export default function ProductPage() {
   const { id } = useParams()
   const { data: product, isPending, isError, error } = useProduct(id)
   const addItem = useCartStore((state) => state.addItem)
-  const openCart = useUiStore((state) => state.openCart)
+  const visualRef = useRef(null)
   const [activeImage, setActiveImage] = useState(0)
   const [quantity, setQuantity] = useState(1)
 
@@ -40,7 +40,7 @@ export default function ProductPage() {
       </Link>
       <div className="mt-6 grid gap-10 lg:grid-cols-[1.1fr_0.9fr]">
         <div>
-          <div className="overflow-hidden rounded-[2rem] bg-paper-2">
+          <div ref={visualRef} className="overflow-hidden rounded-[2rem] bg-paper-2">
             <img src={images[activeImage]} alt={product.title} className="aspect-square w-full object-cover" />
           </div>
           {images.length > 1 ? (
@@ -100,7 +100,7 @@ export default function ProductPage() {
               type="button"
               onClick={() => {
                 addItem(product, quantity)
-                openCart()
+                flyToCart(visualRef.current)
               }}
               className="h-11 flex-1 rounded-full bg-accent text-cream"
             >

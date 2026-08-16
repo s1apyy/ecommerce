@@ -15,12 +15,30 @@ export default function CartDrawer() {
   const removeItem = useCartStore((state) => state.removeItem)
   const totals = getCartTotals(items, promoCode)
 
-  if (!cartOpen) return null
-
   return (
-    <div className="fixed inset-0 z-50 flex justify-end">
-      <button type="button" className="absolute inset-0 bg-ink/35" aria-label="Закрыть корзину" onClick={closeCart} />
-      <aside className="relative flex h-full w-full max-w-md flex-col bg-cream shadow-2xl">
+    <div
+      className={[
+        'fixed inset-0 z-50 flex justify-end',
+        cartOpen ? 'pointer-events-auto' : 'pointer-events-none',
+      ].join(' ')}
+      aria-hidden={!cartOpen}
+      inert={!cartOpen || undefined}
+    >
+      <button
+        type="button"
+        className={[
+          'absolute inset-0 bg-ink/35 transition-opacity duration-300 ease-out',
+          cartOpen ? 'opacity-100' : 'opacity-0',
+        ].join(' ')}
+        aria-label="Закрыть корзину"
+        onClick={closeCart}
+      />
+      <aside
+        className={[
+          'relative flex h-full w-full max-w-md flex-col bg-cream shadow-2xl transition-transform duration-300 ease-out',
+          cartOpen ? 'translate-x-0' : 'translate-x-full',
+        ].join(' ')}
+      >
         <div className="flex items-center justify-between border-b border-line px-5 py-4">
           <h2 className="font-display text-2xl">Корзина</h2>
           <button type="button" onClick={closeCart} className="text-sm text-ink-muted">

@@ -33,6 +33,14 @@ select {
   font: inherit;
 }
 
+button {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
 .scrollbar-thin::-webkit-scrollbar {
   width: 8px;
 }
@@ -40,4 +48,34 @@ select {
 .scrollbar-thin::-webkit-scrollbar-thumb {
   background: #d4c7b8;
   border-radius: 999px;
+}
+
+@keyframes cart-target-bump {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  35% {
+    transform: scale(1.12);
+  }
+}
+
+.cart-target-bump {
+  animation: cart-target-bump 0.42s ease-out;
+}
+
+@keyframes fly-source-pulse {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(0.97);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.fly-source-pulse {
+  animation: fly-source-pulse 0.4s ease-out;
 }

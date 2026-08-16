@@ -78,6 +78,7 @@ export default function Header() {
           </Link>
           <button
             type="button"
+            data-cart-target
             onClick={openCart}
             className="relative inline-flex h-11 items-center gap-2 rounded-full bg-ink px-4 text-sm text-cream"
           >
