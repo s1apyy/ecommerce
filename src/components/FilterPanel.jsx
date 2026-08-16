@@ -8,9 +8,11 @@ const RATINGS = [
   { value: '4.5', label: 'от 4.5' },
 ]
 
-export default function FilterPanel({ onNavigate }) {
+export default function FilterPanel({ onNavigate, categories: categoriesProp, isPending: pendingProp }) {
   const { filters, updateFilters } = useCatalogFilters()
-  const { data: categories = [], isPending } = useCategories()
+  const categoriesQuery = useCategories()
+  const categories = categoriesProp ?? categoriesQuery.data ?? []
+  const isPending = pendingProp ?? (categoriesProp ? false : categoriesQuery.isPending)
 
   function apply(patch) {
     updateFilters(patch)
