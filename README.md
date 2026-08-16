@@ -18,6 +18,8 @@ pnpm dev
 
 Сборка: `pnpm build`. Пакетный менеджер — **pnpm** (npm/yarn не используем).
 
+Storybook: `pnpm storybook` (порт 6006).
+
 ## Промокоды
 
 | Код | Скидка |

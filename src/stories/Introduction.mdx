@@ -1,0 +1,19 @@
+import { Meta } from '@storybook/blocks'
+
+<Meta title="Aurelia/Introduction" />
+
+# Aurelia UI
+
+Компоненты учебного магазина. Состояние каталога живёт в URL, корзина — в Zustand, данные — DummyJSON.
+
+## Каталог
+
+- `ProductCard` — карточка товара
+- `FilterPanel` — категории, цена, рейтинг
+- `InfiniteScrollSentinel` — подгрузка страниц `useInfiniteQuery`
+
+## Корзина
+
+- `CartLineItem` / `CartSummary` — состав и итог
+- `PromoForm` — промокоды
+- `CheckoutForm` — POST `/carts/add`
