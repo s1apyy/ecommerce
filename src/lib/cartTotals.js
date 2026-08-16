@@ -1,7 +1,15 @@
 import { PROMOS, SHIPPING_COST, SHIPPING_THRESHOLD } from './promos'
 
+export function getLineTotal(item) {
+  return item.price * item.quantity
+}
+
 export function getCartTotals(items, promoCode) {
-  const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0)
+  const lines = items.map((item) => ({
+    ...item,
+    lineTotal: getLineTotal(item),
+  }))
+  const subtotal = lines.reduce((sum, item) => sum + item.lineTotal, 0)
   const promo = PROMOS[promoCode]
   let discount = 0
   let shipping = subtotal >= SHIPPING_THRESHOLD || subtotal === 0 ? 0 : SHIPPING_COST
@@ -15,6 +23,8 @@ export function getCartTotals(items, promoCode) {
   }
 
   return {
+    lines,
+    uniqueCount: items.length,
     subtotal,
     discount,
     shipping,
