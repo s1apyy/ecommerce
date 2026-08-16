@@ -9,6 +9,7 @@ export function parseCatalogFilters(searchParams) {
     minPrice: searchParams.get('minPrice') || '',
     maxPrice: searchParams.get('maxPrice') || '',
     minRating: searchParams.get('minRating') || '',
+    page: Math.max(1, Number.parseInt(searchParams.get('page') || '1', 10) || 1),
   }
 }
 
@@ -22,7 +23,11 @@ export function useCatalogFilters() {
       if (value === '' || value == null) next.delete(key)
       else next.set(key, String(value))
     })
-    next.delete('page')
+    if (!Object.prototype.hasOwnProperty.call(patch, 'page')) {
+      next.delete('page')
+    } else if (Number(patch.page) <= 1) {
+      next.delete('page')
+    }
     setSearchParams(next)
   }
 
