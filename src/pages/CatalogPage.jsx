@@ -1,9 +1,10 @@
-import { useSearchParams } from 'react-router-dom'
-import { useProducts } from '../hooks/useProducts'
+import { useMemo } from 'react'
 import ProductCard from '../components/ProductCard.jsx'
-import Pagination from '../components/Pagination.jsx'
-
-const PAGE_SIZE = 12
+import InfiniteScrollSentinel from '../components/InfiniteScrollSentinel.jsx'
+import { useCatalogFilters } from '../hooks/useCatalogFilters'
+import { useFillFilteredPages, useInfiniteScroll } from '../hooks/useInfiniteScroll'
+import { useInfiniteProducts } from '../hooks/useProducts'
+import { filterProducts } from '../lib/filterProducts'
 
 const SORTS = [
   { label: 'Название', sortBy: 'title', order: 'asc' },
@@ -13,34 +14,34 @@ const SORTS = [
 ]
 
 export default function CatalogPage() {
-  const [searchParams, setSearchParams] = useSearchParams()
-  const page = Number(searchParams.get('page') || 1)
-  const sortBy = searchParams.get('sortBy') || 'title'
-  const order = searchParams.get('order') || 'asc'
-  const category = searchParams.get('category') || ''
-  const q = searchParams.get('q') || ''
+  const { filters, updateFilters } = useCatalogFilters()
+  const { q, category, sortBy, order, minPrice, maxPrice, minRating } = filters
 
-  const { data, isPending, isError, error, isFetching } = useProducts({
-    page,
-    limit: PAGE_SIZE,
-    sortBy,
-    order,
-    category,
-    q,
+  const { data, isPending, isError, error, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useInfiniteProducts({ q, category, sortBy, order })
+
+  const loadedProducts = useMemo(
+    () => data?.pages.flatMap((page) => page.products) ?? [],
+    [data],
+  )
+  const products = useMemo(
+    () => filterProducts(loadedProducts, { minPrice, maxPrice, minRating }),
+    [loadedProducts, minPrice, maxPrice, minRating],
+  )
+  const total = data?.pages[0]?.total ?? 0
+
+  const sentinelRef = useInfiniteScroll({
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
   })
 
-  const products = data?.products ?? []
-  const total = data?.total ?? 0
-  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE))
-
-  function updateParams(patch) {
-    const next = new URLSearchParams(searchParams)
-    Object.entries(patch).forEach(([key, value]) => {
-      if (value === '' || value == null) next.delete(key)
-      else next.set(key, String(value))
-    })
-    setSearchParams(next)
-  }
+  useFillFilteredPages({
+    filteredCount: products.length,
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+  })
 
   return (
     <section>
@@ -50,7 +51,9 @@ export default function CatalogPage() {
           <h1 className="mt-1 font-display text-4xl md:text-5xl">
             {q ? `Поиск: ${q}` : category ? category.replaceAll('-', ' ') : 'Все товары'}
           </h1>
-          <p className="mt-2 text-ink-muted">{total} позиций · DummyJSON /products</p>
+          <p className="mt-2 text-ink-muted">
+            Показано {products.length} из {total} · бесконечный скролл
+          </p>
         </div>
         <label className="flex items-center gap-3 text-sm">
           <span className="text-ink-muted">Сортировка</span>
@@ -58,7 +61,7 @@ export default function CatalogPage() {
             value={`${sortBy}:${order}`}
             onChange={(event) => {
               const [nextSort, nextOrder] = event.target.value.split(':')
-              updateParams({ sortBy: nextSort, order: nextOrder, page: 1 })
+              updateFilters({ sortBy: nextSort, order: nextOrder })
             }}
             className="h-11 rounded-full border border-line bg-cream px-4 outline-none"
           >
@@ -81,22 +84,26 @@ export default function CatalogPage() {
             <div key={index} className="h-[28rem] animate-pulse rounded-3xl bg-paper-2" />
           ))}
         </div>
+      ) : products.length === 0 && (hasNextPage || isFetchingNextPage) ? (
+        <p className="rounded-2xl border border-line bg-cream p-8 text-ink-muted">
+          Подбираем товары по фильтрам…
+        </p>
       ) : products.length === 0 ? (
         <p className="rounded-2xl border border-line bg-cream p-8 text-ink-muted">Ничего не найдено.</p>
       ) : (
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
-          {products.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
+        <>
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+            {products.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+          <InfiniteScrollSentinel
+            sentinelRef={sentinelRef}
+            hasNextPage={hasNextPage}
+            isFetchingNextPage={isFetchingNextPage}
+          />
+        </>
       )}
-
-      <Pagination
-        page={page}
-        totalPages={totalPages}
-        isFetching={isFetching && !isPending}
-        onPageChange={(nextPage) => updateParams({ page: nextPage })}
-      />
     </section>
   )
 }
