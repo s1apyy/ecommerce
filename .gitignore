@@ -1,0 +1,11 @@
+node_modules
+dist
+storybook-static
+coverage
+.DS_Store
+*.local
+.vscode
+.env
+.env.*
+package-lock.json
+yarn.lock
