@@ -1,9 +1,18 @@
-import { useState } from 'react'
-import { formatPrice } from '../lib/format'
+import { useEffect, useState } from 'react'
+import { useI18n } from '../hooks/useI18n'
+import { useProfileStore } from '../store/useProfileStore'
 
 export default function CheckoutForm({ items, totals, promoCode, onSubmit, isPending, error }) {
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
+  const profileName = useProfileStore((state) => state.name)
+  const profileEmail = useProfileStore((state) => state.email)
+  const [name, setName] = useState(profileName)
+  const [email, setEmail] = useState(profileEmail)
+  const { t, money } = useI18n()
+
+  useEffect(() => {
+    if (profileName) setName(profileName)
+    if (profileEmail) setEmail(profileEmail)
+  }, [profileName, profileEmail])
 
   const emailValid = email.includes('@') && email.includes('.')
   const canSubmit = name.trim().length > 1 && emailValid && items.length > 0 && !isPending
@@ -24,7 +33,7 @@ export default function CheckoutForm({ items, totals, promoCode, onSubmit, isPen
     >
       <div>
         <label className="mb-1 block text-sm font-medium" htmlFor="checkout-name">
-          Имя
+          {t('checkout.name')}
         </label>
         <input
           id="checkout-name"
@@ -37,7 +46,7 @@ export default function CheckoutForm({ items, totals, promoCode, onSubmit, isPen
       </div>
       <div>
         <label className="mb-1 block text-sm font-medium" htmlFor="checkout-email">
-          Email
+          {t('checkout.email')}
         </label>
         <input
           id="checkout-email"
@@ -55,11 +64,9 @@ export default function CheckoutForm({ items, totals, promoCode, onSubmit, isPen
         disabled={!canSubmit}
         className="h-12 w-full rounded-full bg-accent text-cream disabled:opacity-40"
       >
-        {isPending ? 'Отправляем заказ…' : `Оформить · ${formatPrice(totals.total)}`}
+        {isPending ? t('checkout.sending') : t('checkout.submit', { total: money(totals.total) })}
       </button>
-      <p className="text-xs text-ink-muted">
-        Симуляция: POST https://dummyjson.com/carts/add с содержимым корзины.
-      </p>
+      <p className="text-xs text-ink-muted">{t('checkout.note')}</p>
     </form>
   )
 }
