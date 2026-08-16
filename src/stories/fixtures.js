@@ -38,5 +38,5 @@ export const sampleTotals = {
   discount: 1.85,
   shipping: 9.99,
   total: 26.68,
-  promo: { type: 'percent', value: 10, label: '−10% на заказ' },
+  promo: { type: 'percent', value: 10, labelKey: 'promo.sale10', label: '−10% на заказ' },
 }

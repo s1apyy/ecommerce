@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import CatalogPage from '../pages/CatalogPage'
+import { translateProductTitle } from '../i18n/catalog'
 
 const mockProduct = {
   id: 1,
@@ -12,6 +13,7 @@ const mockProduct = {
   rating: 4.94,
   stock: 5,
   thumbnail: 'https://cdn.dummyjson.com/thumb.webp',
+  images: ['https://cdn.dummyjson.com/full.webp'],
 }
 
 jest.mock('../hooks/useProducts', () => ({
@@ -37,7 +39,7 @@ describe('CatalogPage', () => {
       </MemoryRouter>,
     )
     expect(screen.getByRole('heading', { name: /все товары/i })).toBeInTheDocument()
-    expect(screen.getByText(mockProduct.title)).toBeInTheDocument()
+    expect(screen.getByText(translateProductTitle(mockProduct, 'ru'))).toBeInTheDocument()
     expect(screen.getByText(/это все товары/i)).toBeInTheDocument()
   })
 })

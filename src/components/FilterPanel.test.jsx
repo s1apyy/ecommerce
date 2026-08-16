@@ -22,7 +22,7 @@ describe('FilterPanel', () => {
     renderPanel()
 
     expect(screen.getByText('Категории')).toBeInTheDocument()
-    expect(screen.getByText('Smartphones')).toBeInTheDocument()
+    expect(screen.getByText('Смартфоны')).toBeInTheDocument()
     expect(screen.getByText('Цена, $')).toBeInTheDocument()
     expect(screen.getByText('Рейтинг')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'от 4.0' })).toBeInTheDocument()
