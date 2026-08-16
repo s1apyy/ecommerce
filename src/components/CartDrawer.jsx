@@ -3,6 +3,7 @@ import { getCartTotals } from '../lib/cartTotals'
 import { formatPrice } from '../lib/format'
 import { useCartStore } from '../store/useCartStore'
 import { useUiStore } from '../store/useUiStore'
+import CartSummary from './CartSummary.jsx'
 import PromoForm from './PromoForm.jsx'
 
 export default function CartDrawer() {
@@ -31,12 +32,14 @@ export default function CartDrawer() {
           {items.length === 0 ? (
             <p className="text-ink-muted">Пока пусто — выберите что-нибудь в каталоге.</p>
           ) : (
-            items.map((item) => (
+            totals.lines.map((item) => (
               <div key={item.id} className="flex gap-3 rounded-2xl border border-line p-3">
                 <img src={item.thumbnail} alt="" className="h-20 w-20 rounded-xl object-cover" />
                 <div className="min-w-0 flex-1">
                   <p className="line-clamp-2 text-sm font-medium">{item.title}</p>
-                  <p className="mt-1 text-sm">{formatPrice(item.price)}</p>
+                  <p className="mt-1 text-sm">
+                    {item.quantity} × {formatPrice(item.price)} = {formatPrice(item.lineTotal)}
+                  </p>
                   <div className="mt-2 flex items-center gap-2">
                     <button
                       type="button"
@@ -69,24 +72,7 @@ export default function CartDrawer() {
 
         <div className="space-y-4 border-t border-line px-5 py-4">
           <PromoForm />
-          <div className="space-y-1 text-sm">
-            <div className="flex justify-between">
-              <span>Товары</span>
-              <span>{formatPrice(totals.subtotal)}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Скидка</span>
-              <span>−{formatPrice(totals.discount)}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Доставка</span>
-              <span>{totals.shipping === 0 ? 'Бесплатно' : formatPrice(totals.shipping)}</span>
-            </div>
-            <div className="flex justify-between font-display text-xl">
-              <span>Итого</span>
-              <span>{formatPrice(totals.total)}</span>
-            </div>
-          </div>
+          <CartSummary totals={totals} />
           <Link
             to="/cart"
             onClick={closeCart}

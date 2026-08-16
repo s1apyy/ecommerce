@@ -1,14 +1,15 @@
 import { api } from './client'
 
+export const PAGE_SIZE = 12
+
 export async function fetchProducts({
-  page = 1,
-  limit = 12,
+  skip = 0,
+  limit = PAGE_SIZE,
   sortBy,
   order = 'asc',
   category,
   q,
 } = {}) {
-  const skip = (page - 1) * limit
   const params = { limit, skip }
 
   if (sortBy) {
@@ -26,6 +27,12 @@ export async function fetchProducts({
 
   const { data } = await api.get(url, { params })
   return data
+}
+
+export function getNextSkip(lastPage) {
+  if (!lastPage) return undefined
+  const nextSkip = lastPage.skip + lastPage.limit
+  return nextSkip < lastPage.total ? nextSkip : undefined
 }
 
 export async function fetchProduct(id) {
