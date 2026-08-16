@@ -33,6 +33,11 @@ select {
   font: inherit;
 }
 
+select {
+  appearance: none;
+  field-sizing: content;
+}
+
 button {
   cursor: pointer;
 }

@@ -1,4 +1,8 @@
+import { useI18n } from '../hooks/useI18n'
+import { cn } from '../lib/cn'
+
 export default function Pagination({ page, totalPages, onPageChange, isFetching }) {
+  const { t } = useI18n()
   if (totalPages <= 1) return null
 
   const pages = Array.from({ length: totalPages }, (_, index) => index + 1).filter(
@@ -21,7 +25,7 @@ export default function Pagination({ page, totalPages, onPageChange, isFetching 
         onClick={() => onPageChange(page - 1)}
         className="rounded-full border border-line px-4 py-2 text-sm disabled:opacity-40"
       >
-        Назад
+        {t('pagination.prev')}
       </button>
       {items.map((item, index) =>
         item === 'ellipsis' ? (
@@ -33,10 +37,10 @@ export default function Pagination({ page, totalPages, onPageChange, isFetching 
             key={item}
             type="button"
             onClick={() => onPageChange(item)}
-            className={[
+            className={cn(
               'h-10 min-w-10 rounded-full px-3 text-sm',
               item === page ? 'bg-ink text-cream' : 'border border-line bg-cream',
-            ].join(' ')}
+            )}
           >
             {item}
           </button>
@@ -48,9 +52,9 @@ export default function Pagination({ page, totalPages, onPageChange, isFetching 
         onClick={() => onPageChange(page + 1)}
         className="rounded-full border border-line px-4 py-2 text-sm disabled:opacity-40"
       >
-        Далее
+        {t('pagination.next')}
       </button>
-      {isFetching ? <span className="text-sm text-ink-muted">Обновление…</span> : null}
+      {isFetching ? <span className="text-sm text-ink-muted">{t('pagination.updating')}</span> : null}
     </div>
   )
 }
