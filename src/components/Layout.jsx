@@ -1,23 +1,32 @@
-import { Outlet } from 'react-router-dom'
+import { useEffect } from 'react'
+import { Outlet, useLocation } from 'react-router-dom'
 import { useUiStore } from '../store/useUiStore'
+import { useI18n } from '../hooks/useI18n'
 import Header from './Header.jsx'
 import Sidebar from './Sidebar.jsx'
 import CartDrawer from './CartDrawer.jsx'
 
 export default function Layout() {
+  const location = useLocation()
+  const { locale, t } = useI18n()
   const sidebarOpen = useUiStore((state) => state.sidebarOpen)
   const setSidebarOpen = useUiStore((state) => state.setSidebarOpen)
+  const showSidebar = location.pathname === '/'
+
+  useEffect(() => {
+    document.documentElement.lang = locale === 'en' ? 'en' : 'ru'
+  }, [locale])
 
   return (
     <div className="min-h-screen bg-paper text-ink">
       <Header />
       <div className="flex">
-        <Sidebar />
-        {sidebarOpen ? (
+        {showSidebar ? <Sidebar /> : null}
+        {showSidebar && sidebarOpen ? (
           <button
             type="button"
             className="fixed inset-0 z-30 bg-ink/30 md:hidden"
-            aria-label="Закрыть меню"
+            aria-label={t('cart.close')}
             onClick={() => setSidebarOpen(false)}
           />
         ) : null}
