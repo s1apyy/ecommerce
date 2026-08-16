@@ -26,7 +26,7 @@ export default function Header() {
     } else {
       next.delete('q')
     }
-    next.set('page', '1')
+    next.delete('page')
     navigate({ pathname: '/', search: next.toString() })
   }, [debouncedQuery, navigate, searchParams])
 

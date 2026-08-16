@@ -1,11 +1,20 @@
-import { keepPreviousData, useQuery } from '@tanstack/react-query'
-import { fetchCategories, fetchProduct, fetchProducts } from '../api/products'
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
+import { fetchCategories, fetchProduct, fetchProducts, getNextSkip, PAGE_SIZE } from '../api/products'
 
-export function useProducts(filters) {
-  return useQuery({
-    queryKey: ['products', filters],
-    queryFn: () => fetchProducts(filters),
-    placeholderData: keepPreviousData,
+export function useInfiniteProducts({ q, category, sortBy, order } = {}) {
+  return useInfiniteQuery({
+    queryKey: ['products', 'infinite', { q, category, sortBy, order }],
+    queryFn: ({ pageParam }) =>
+      fetchProducts({
+        skip: pageParam,
+        limit: PAGE_SIZE,
+        q,
+        category,
+        sortBy,
+        order,
+      }),
+    initialPageParam: 0,
+    getNextPageParam: getNextSkip,
   })
 }
 
