@@ -16,7 +16,7 @@ describe('useCartStore', () => {
     expect(useCartStore.getState().applyPromo('sale10')).toBe(true)
     expect(useCartStore.getState().promoCode).toBe('SALE10')
     expect(useCartStore.getState().applyPromo('NOPE')).toBe(false)
-    expect(useCartStore.getState().promoError).toBe('Промокод не найден')
+    expect(useCartStore.getState().promoError).toBe('notFound')
   })
 
   it('clears cart and promo', () => {

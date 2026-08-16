@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import ProductCard from '../components/ProductCard'
+import { translateProductTitle } from '../i18n/catalog'
 import { sampleProduct } from '../stories/fixtures'
 import { useCartStore } from '../store/useCartStore'
 import { useUiStore } from '../store/useUiStore'
@@ -22,7 +23,7 @@ describe('ProductCard', () => {
 
   it('renders title and discounted price', () => {
     renderCard()
-    expect(screen.getByText(sampleProduct.title)).toBeInTheDocument()
+    expect(screen.getByText(translateProductTitle(sampleProduct, 'ru'))).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /в корзину/i })).toBeInTheDocument()
   })
 

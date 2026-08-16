@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { PROMOS } from '../lib/promos'
 import { salePrice } from '../lib/format'
+import { productImage } from '../lib/media'
 
 export const useCartStore = create(
   persist(
@@ -32,7 +33,7 @@ export const useCartStore = create(
               {
                 id: product.id,
                 title: product.title,
-                thumbnail: product.thumbnail,
+                thumbnail: productImage(product),
                 price: unitPrice,
                 stock: product.stock || 99,
                 quantity,
@@ -69,7 +70,7 @@ export const useCartStore = create(
           return false
         }
         if (!PROMOS[normalized]) {
-          set({ promoError: 'Промокод не найден' })
+          set({ promoError: 'notFound' })
           return false
         }
         set({ promoCode: normalized, promoError: '' })

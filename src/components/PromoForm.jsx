@@ -1,6 +1,7 @@
 import { useState } from 'react'
-import { PROMOS } from '../lib/promos'
+import { PROMOS, formatPromoLabel } from '../lib/promos'
 import { useCartStore } from '../store/useCartStore'
+import { useI18n } from '../hooks/useI18n'
 
 export default function PromoForm() {
   const promoCode = useCartStore((state) => state.promoCode)
@@ -8,6 +9,8 @@ export default function PromoForm() {
   const applyPromo = useCartStore((state) => state.applyPromo)
   const removePromo = useCartStore((state) => state.removePromo)
   const [value, setValue] = useState(promoCode)
+  const { t, money } = useI18n()
+  const promo = PROMOS[promoCode]
 
   return (
     <form
@@ -17,7 +20,7 @@ export default function PromoForm() {
         applyPromo(value)
       }}
     >
-      <label className="block text-sm font-medium">Промокод</label>
+      <label className="block text-sm font-medium">{t('promo.label')}</label>
       <div className="flex gap-2">
         <input
           value={value}
@@ -34,19 +37,19 @@ export default function PromoForm() {
             }}
             className="rounded-xl border border-line px-3 text-sm"
           >
-            Сбросить
+            {t('promo.reset')}
           </button>
         ) : (
           <button type="submit" className="rounded-xl bg-ink px-4 text-sm text-cream">
-            Применить
+            {t('promo.apply')}
           </button>
         )}
       </div>
-      {promoError ? <p className="text-sm text-accent">{promoError}</p> : null}
-      {promoCode && PROMOS[promoCode] ? (
-        <p className="text-sm text-ink-muted">{PROMOS[promoCode].label}</p>
+      {promoError ? <p className="text-sm text-accent">{t(`promo.${promoError}`)}</p> : null}
+      {promo ? (
+        <p className="text-sm text-ink-muted">{formatPromoLabel(promo, t, money)}</p>
       ) : (
-        <p className="text-xs text-ink-muted">SALE10 · SALE20 · WELCOME · FREESHIP</p>
+        <p className="text-xs text-ink-muted">{t('promo.hint')}</p>
       )}
     </form>
   )
